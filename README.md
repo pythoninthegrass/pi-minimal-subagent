@@ -45,7 +45,7 @@ You are a fast codebase scout. Return dense findings for the parent agent.
 
 Loaded from:
 
-- `~/.pi/agent/agents/*.md`
+- Pi's global agent directory, usually `~/.pi/agent/agents/*.md` and honoring `PI_CODING_AGENT_DIR`
 - `.pi/agents/*.md` in the current project or an ancestor directory
 
 Project agents override user agents with the same name.
@@ -56,7 +56,7 @@ Subagents use Pi's default enabled tools. This extension does not read `tools` f
 
 ## Settings
 
-Global settings live in `~/.pi/agent/settings.json`; project settings live in `.pi/settings.json` and override global settings.
+Global settings live in Pi's agent settings file (usually `~/.pi/agent/settings.json`; honors `PI_CODING_AGENT_DIR`). Project settings live in `.pi/settings.json` and override global settings.
 
 ```jsonc
 {
@@ -70,7 +70,15 @@ Global settings live in `~/.pi/agent/settings.json`; project settings live in `.
 }
 ```
 
-`model` is the default model for spawned subagents. Agent frontmatter `model` overrides it. `extensions` are loaded into every spawned subagent; agent frontmatter `extensions` are appended. Subagents run with `--no-extensions` first, then explicitly load configured extensions.
+`model` is the default model for spawned subagents. Agent frontmatter `model` overrides it.
+
+`extensions` is tri-state, matching `pi-fork`:
+
+- `null` or omitted: child subagents load normal Pi extensions from settings and auto-discovery.
+- `[]`: child subagents run with `--no-extensions` and no default extra extensions.
+- non-empty array: child subagents run with `--no-extensions`, then explicitly load those extensions.
+
+Agent frontmatter `extensions` are always appended as explicit `--extension` entries. With `extensions: null`, they are added on top of normal Pi extension loading; with `[]` or a non-empty array, they are the only additions besides the configured list.
 
 The extension does not block recursive usage. If a user loads this extension inside a subagent, nested subagent calls are allowed.
 

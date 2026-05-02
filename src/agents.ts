@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
-import { parseFrontmatter } from "@mariozechner/pi-coding-agent";
+import { getAgentDir, parseFrontmatter } from "@mariozechner/pi-coding-agent";
 import { resolveConfiguredPath } from "./settings.ts";
 import type { AgentConfig, AgentSource } from "./types.ts";
 
@@ -98,7 +97,7 @@ function findProjectAgentsDir(cwd: string): string | null {
 }
 
 export function discoverAgents(cwd: string): AgentDiscoveryResult {
-  const userDir = path.join(os.homedir(), ".pi", "agent", "agents");
+  const userDir = path.join(getAgentDir(), "agents");
   const projectAgentsDir = findProjectAgentsDir(cwd);
 
   const userAgents = loadAgentsFromDir(userDir, "user");

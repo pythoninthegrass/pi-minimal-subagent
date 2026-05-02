@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { getAgentDir } from "@mariozechner/pi-coding-agent";
 import type { Settings } from "./types.ts";
 
 const SETTINGS_KEY = "pi-minimal-subagent";
@@ -38,7 +39,9 @@ function readSettings(filePath: string, baseDir: string): Partial<Settings> {
     settings.model = null;
   }
 
-  if (Array.isArray(config.extensions)) {
+  if (config.extensions === null) {
+    settings.extensions = null;
+  } else if (Array.isArray(config.extensions)) {
     settings.extensions = config.extensions
       .filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0)
       .map((entry) => resolveConfiguredPath(entry.trim(), baseDir));
@@ -48,12 +51,12 @@ function readSettings(filePath: string, baseDir: string): Partial<Settings> {
 }
 
 export function resolveSettings(cwd: string): Settings {
-  const globalDir = path.join(os.homedir(), ".pi", "agent");
+  const globalDir = getAgentDir();
   const projectDir = path.join(cwd, ".pi");
 
   return {
     model: null,
-    extensions: [],
+    extensions: null,
     ...readSettings(path.join(globalDir, "settings.json"), globalDir),
     ...readSettings(path.join(projectDir, "settings.json"), projectDir),
   };

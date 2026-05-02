@@ -17,7 +17,7 @@ export interface AgentConfig {
 
 export interface Settings {
   model: string | null;
-  extensions: string[];
+  extensions: string[] | null;
 }
 
 export interface UsageStats {

@@ -53,7 +53,7 @@ function cleanupTempDir(dir: string | null): void {
 }
 
 function mergeExtensions(settings: Settings, agent: AgentConfig): string[] {
-  return [...new Set([...settings.extensions, ...(agent.extensions ?? [])])];
+  return [...new Set([...(settings.extensions ?? []), ...(agent.extensions ?? [])])];
 }
 
 function buildPiArgs(opts: {
@@ -63,9 +63,14 @@ function buildPiArgs(opts: {
   agent: AgentConfig;
 }): string[] {
   const { task, systemPromptPath, settings, agent } = opts;
-  const args = ["--mode", "json", "-p", "--no-session", "--no-extensions"];
+  const args = ["--mode", "json", "-p", "--no-session"];
+  const extensions = mergeExtensions(settings, agent);
 
-  for (const extension of mergeExtensions(settings, agent)) {
+  if (settings.extensions !== null) {
+    args.push("--no-extensions");
+  }
+
+  for (const extension of extensions) {
     args.push("--extension", extension);
   }
 
