@@ -1,4 +1,4 @@
-import type { Message } from "@mariozechner/pi-ai";
+import type { Message } from "@earendil-works/pi-ai";
 import { getFinalAssistantText } from "./runner-events.js";
 
 export type AgentSource = "user" | "project";
